@@ -1,35 +1,134 @@
-// /routes/todos.js
-const express = require('express');
-const Todo = require('../models/Todo');
-const { authenticateToken } = require('./auth');
-
+const express = require("express");
 const router = express.Router();
+const { body, validationResult } = require("express-validator");
 
-// Create a new todo
-router.post('/', authenticateToken, async (req, res) => {
-    const { title } = req.body;
-    const newTodo = new Todo({
-        title,
-        user: req.user.id, // Assign the authenticated user
+const ToDo = require("../models/ToDo");
+const auth = require("../middleware/authMiddleware");
+
+router.get("/", auth, async (req, res) => {
+  try {
+    const todos = await ToDo.find({ user: req.user.id }).sort({
+      createdAt: -1,
     });
-
-    try {
-        const savedTodo = await newTodo.save();
-        res.status(201).json(savedTodo);
-    } catch (error) {
-        res.status(500).json({ error: 'Error creating todo' });
-    }
+    res.json(todos);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
 });
 
-// Get all todos for the authenticated user
-router.get('/', authenticateToken, async (req, res) => {
-    try {
-        const todos = await Todo.find({ user: req.user.id });
-        res.json(todos);
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching todos' });
+router.post(
+  "/",
+  [
+    auth,
+    body("title", "Title is required").not().isEmpty(),
+    body("title", "Title should not exceed 100 characters").isLength({
+      max: 100,
+    }),
+    body(
+      "description",
+      "Description should not exceed 500 characters"
+    ).isLength({ max: 500 }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
+
+    const { title, description } = req.body;
+
+    try {
+      const newToDo = new ToDo({
+        title,
+        description,
+        user: req.user.id,
+      });
+
+      const todo = await newToDo.save();
+      res.status(201).json(todo);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  }
+);
+
+router.put(
+  "/:id",
+  [
+    auth,
+    body("title", "Title should not exceed 100 characters")
+      .optional()
+      .isLength({ max: 100 }),
+    body("description", "Description should not exceed 500 characters")
+      .optional()
+      .isLength({ max: 500 }),
+    body("completed").optional().isBoolean(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { title, description, completed } = req.body;
+
+    const toDoFields = {};
+    if (title) toDoFields.title = title;
+    if (description) toDoFields.description = description;
+    if (typeof completed === "boolean") toDoFields.completed = completed;
+
+    try {
+      let todo = await ToDo.findById(req.params.id);
+
+      if (!todo) {
+        return res.status(404).json({ message: "ToDo not found" });
+      }
+
+      if (todo.user.toString() !== req.user.id) {
+        return res.status(401).json({ message: "User not authorized" });
+      }
+
+      todo = await ToDo.findByIdAndUpdate(
+        req.params.id,
+        { $set: toDoFields },
+        { new: true }
+      );
+
+      res.json(todo);
+    } catch (err) {
+      console.error(err.message);
+      if (err.kind === "ObjectId") {
+        return res.status(404).json({ message: "ToDo not found" });
+      }
+      res.status(500).send("Server error");
+    }
+  }
+);
+
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const todo = await ToDo.findById(req.params.id);
+
+    if (!todo) {
+      return res.status(404).json({ message: "ToDo not found" });
+    }
+
+    if (todo.user.toString() !== req.user.id) {
+      return res.status(401).json({ message: "User not authorized" });
+    }
+
+    await ToDo.findByIdAndDelete(req.params.id);
+
+    res.json({ message: "ToDo removed" });
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ message: "ToDo not found" });
+    }
+    res.status(500).send("Server error");
+  }
 });
 
-// Export the router
 module.exports = router;
