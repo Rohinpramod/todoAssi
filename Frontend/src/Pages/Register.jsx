@@ -44,10 +44,10 @@ function Register() {
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Username</label>
+          <label className="form-label fw-bold">Username</label>
           <input
             type="text"
-            className="form-control"
+            className="form-control shadow  bg-body-tertiary rounded"
             name="username"
             value={form.username}
             onChange={handleChange}
@@ -55,10 +55,10 @@ function Register() {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Email</label>
+          <label className="form-label fw-bold">Email</label>
           <input
             type="email"
-            className="form-control"
+            className="form-control shadow  bg-body-tertiary rounded"
             name="email"
             value={form.email}
             onChange={handleChange}
@@ -66,10 +66,10 @@ function Register() {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Password</label>
+          <label className="form-label fw-bold">Password</label>
           <input
             type="password"
-            className="form-control"
+            className="form-control shadow  bg-body-tertiary rounded"
             name="password"
             value={form.password}
             onChange={handleChange}
@@ -77,18 +77,18 @@ function Register() {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Confirm Password</label>
+          <label className="form-label fw-bold">Confirm Password</label>
           <input
             type="password"
-            className="form-control"
+            className="form-control shadow  bg-body-tertiary rounded"
             name="confirmPassword"
             value={form.confirmPassword}
             onChange={handleChange}
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Register
+        <button type="submit" className="btn btn-primary fw-bold">
+          Register 
         </button>
       </form>
       <p className="mt-3">

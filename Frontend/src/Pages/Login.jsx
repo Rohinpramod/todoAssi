@@ -33,15 +33,15 @@ function Login() {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 ">
       <h2>Login</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Email</label>
+          <label className="form-label fw-semibold">Email</label>
           <input
             type="email"
-            className="form-control"
+            className="form-control shadow  bg-body-tertiary rounded"
             name="email"
             value={form.email}
             onChange={handleChange}
@@ -49,17 +49,17 @@ function Login() {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Password</label>
+          <label className="form-label fw-semibold">Password</label>
           <input
             type="password"
-            className="form-control"
+            className="form-control shadow bg-body-tertiary rounded"
             name="password"
             value={form.password}
             onChange={handleChange}
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary fw-bold">
           Login
         </button>
       </form>

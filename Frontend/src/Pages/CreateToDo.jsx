@@ -39,10 +39,10 @@ function CreateToDo() {
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Title</label>
+          <label className="form-label fw-bold">Title</label>
           <input
             type="text"
-            className="form-control"
+            className="form-control shadow "
             name="title"
             value={form.title}
             onChange={handleChange}
@@ -50,18 +50,18 @@ function CreateToDo() {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Description</label>
+          <label className="form-label fw-bold">Description</label>
           <textarea
-            className="form-control"
+            className="form-control shadow"
             name="description"
             value={form.description}
             onChange={handleChange}
           ></textarea>
         </div>
-        <button type="submit" className="btn btn-success">
+        <button type="submit" className="btn btn-warning">
           Create
         </button>
-        <Link to="/todos" className="btn btn-secondary ms-2">
+        <Link to="/todos" className="btn btn-danger ms-2">
           Cancel
         </Link>
       </form>

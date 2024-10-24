@@ -46,11 +46,11 @@ function ToDoList() {
     <div className="container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2>My ToDos</h2>
-        <button className="btn btn-secondary" onClick={handleLogout}>
+        <button className="btn btn-primary" onClick={handleLogout}>
           Logout
         </button>
       </div>
-      <Link to="/create" className="btn btn-success mb-3">
+      <Link to="/create" className="btn btn-warning mb-3">
         Create New ToDo
       </Link>
       {error && <div className="alert alert-danger">{error}</div>}
